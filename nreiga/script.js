@@ -23,11 +23,10 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
 
   try {
     const users = await loadUsers();
-    // JSONのキーに合わせて比較条件を修正
     const matched = users.find(u => u.id === idHash && u.password === pwHash);
 
     if (matched) {
-      window.location.href = "home.html"; // 認証成功時のリダイレクト先
+      window.location.href = "home.html";
     } else {
       document.getElementById("error-msg").textContent = "IDまたはパスワードが間違っています。";
     }
