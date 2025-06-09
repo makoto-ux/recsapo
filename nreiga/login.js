@@ -29,6 +29,10 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
   try {
     const users = await loadUsers();
     console.log("読み込んだユーザー一覧:", users);
+    users.forEach((user, index) => {
+  console.log(`ユーザー${index + 1}のID:`, user.id);
+  console.log(`ユーザー${index + 1}のパスワード:`, user.password);
+});
 
     const matched = users.find(u => u.id === idHash && u.password === pwHash);
     console.log("マッチしたユーザー:", matched);
