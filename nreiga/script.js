@@ -8,7 +8,7 @@ async function sha256(str) {
 }
 
 async function loadUsers() {
-  const res = await fetch("users.json");
+  const res = await fetch("users.json?nocache=" + Date.now());
   if (!res.ok) throw new Error("ユーザー情報の読み込みに失敗しました");
   return await res.json();
 }
