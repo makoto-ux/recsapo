@@ -31,6 +31,7 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
       document.getElementById("error-msg").textContent = "IDまたはパスワードが間違っています。";
     }
   } catch (err) {
-    document.getElementById("error-msg").textContent = "ログインエラー：" + err.message;
-  }
+  document.getElementById("error-msg").textContent = "ログインエラー：" + err.message + "\n\n" + 
+    "Condition function:\n" + (u => u.id === idHash && u.password === pwHash).toString();
+}
 });
