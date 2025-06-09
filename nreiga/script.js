@@ -23,7 +23,8 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
 
   try {
     const users = await loadUsers();
-    const matched = users.find(u => u.idHash === idHash && u.pwHash === pwHash);
+    // JSONのキーに合わせて比較条件を修正
+    const matched = users.find(u => u.id === idHash && u.password === pwHash);
 
     if (matched) {
       window.location.href = "home.html"; // 認証成功時のリダイレクト先
