@@ -64,7 +64,7 @@ async function sendLoginLog({ userId, username, result }) {
       result: result || "成功",
     };
 
-    await fetch("https://script.google.com/macros/s/AKfycbzVmPTTheAc6OGhGo_12mFAx1sm22OGeX5HK5TXQ92zKsoI6ajJQ9rR5QlDxF3xpg3D/exec", {
+    await fetch("https://script.google.com/macros/s/AKfycbwAz43-e4y9rva0UNuEVcMIAql3dvXJyo8mQ_X7ukdfLXPS3rmV0Wx2HwytNvMj0_zo/exec", {
       method: "POST",
       body: JSON.stringify(logData),
       headers: { "Content-Type": "application/json" }
