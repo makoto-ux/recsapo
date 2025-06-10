@@ -52,10 +52,16 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
 });
 
 async function sendLoginLog({ userId, username, result }) {
+  async function sendLoginLog({ userId, username, result }) {
   try {
+    // 外部APIでIPアドレスを取得
     const ipRes = await fetch("https://api.ipify.org?format=json");
+    if (!ipRes.ok) {
+      throw new Error(`IP取得失敗: ${ipRes.status}`);
+    }
     const ipData = await ipRes.json();
 
+    // ログ用データ作成
     const logData = {
       userId: userId || "",
       username: username || "",
@@ -64,13 +70,21 @@ async function sendLoginLog({ userId, username, result }) {
       result: result || "成功",
     };
 
-    await fetch("https://script.google.com/macros/s/AKfycbwAz43-e4y9rva0UNuEVcMIAql3dvXJyo8mQ_X7ukdfLXPS3rmV0Wx2HwytNvMj0_zo/exec", {
+    // Google Apps Script のWebアプリURLへPOST
+    const res = await fetch("https://script.google.com/macros/s/AKfycbwAz43-e4y9rva0UNuEVcMIAql3dvXJyo8mQ_X7ukdfLXPS3rmV0Wx2HwytNvMj0_zo/exec", {
       method: "POST",
       body: JSON.stringify(logData),
       headers: { "Content-Type": "application/json" }
     });
+
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error("ログ送信失敗: " + res.status + " " + text);
+    }
+
   } catch (err) {
     console.error("ログ送信エラー:", err);
   }
+}
 }
 
