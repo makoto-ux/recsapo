@@ -51,7 +51,7 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
   }
 });
 
-async function sendLoginLog({ userId, username, result }) {
+
   async function sendLoginLog({ userId, username, result }) {
   try {
     // 外部APIでIPアドレスを取得
@@ -86,5 +86,5 @@ async function sendLoginLog({ userId, username, result }) {
     console.error("ログ送信エラー:", err);
   }
 }
-}
+
 
