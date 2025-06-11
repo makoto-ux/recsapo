@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>レクリエーション選択</title>
+
+  <!-- Font Awesome アイコン用CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f2f2f2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: #3498db;
+      color: white;
+      width: 100%;
+      text-align: center;
+      padding: 30px 0;
+      font-size: 36px;
+      font-weight: bold;
+    }
+
+    .container {
+      max-width: 900px;
+      width: 90%;
+      margin-top: 60px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+    }
+
+    .recreation-button {
+      background-color: #2980b9;
+      color: white;
+      padding: 40px;
+      font-size: 24px;
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      text-align: center;
+    }
+
+    .recreation-button i {
+      font-size: 40px;
+      display: block;
+      margin-bottom: 12px;
+    }
+
+    .recreation-button:hover {
+      background-color: #1f5f91;
+    }
+  </style>
+</head>
+<body>
+
+  <header>レクリエーション選択画面</header>
+
+  <div class="container">
+    <button class="recreation-button">
+      <i class="fas fa-wrench"></i>
+      昭和の道具クイズ
+    </button>
+    <button class="recreation-button">
+      <i class="fas fa-child"></i>
+      昔の遊びクイズ
+    </button>
+    <button class="recreation-button">
+      <i class="fas fa-tv"></i>
+      レトロ家電クイズ
+    </button>
+    <button class="recreation-button">
+      <i class="fas fa-bullhorn"></i>
+      昔のCMクイズ
+    </button>
+    <!-- 追加する場合 -->
+    <!--
+    <button class="recreation-button">
+      <i class="fas fa-music"></i>
+      音楽イントロクイズ
+    </button>
+    <button class="recreation-button">
+      <i class="fas fa-film"></i>
+      懐かしドラマ当て
+    </button>
+    -->
+  </div>
+ <script src="auth-check.js"></script>
+</body>
+</html>
