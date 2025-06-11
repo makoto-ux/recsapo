@@ -48,6 +48,8 @@ localStorage.setItem("loginTime", loginTime.toString());
   window.location.href = "home.html";
 } else {
   await sendLoginLog({ userId: "", username: id, result: "失敗" });
+      localStorage.removeItem("loggedIn");
+    localStorage.removeItem("loginTime");
   document.getElementById("error-msg").textContent = "IDまたはパスワードが間違っています。";
 }
 
