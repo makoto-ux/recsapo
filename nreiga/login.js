@@ -39,6 +39,12 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
 
     if (matched) {
   await sendLoginLog({ userId: matched.id, username: matched.name || id, result: "成功" });
+      
+// ログイン成功時
+const loginTime = new Date().getTime(); // 現在のタイムスタンプ（ミリ秒）
+localStorage.setItem("loggedIn", "true");
+localStorage.setItem("loginTime", loginTime.toString());
+
   window.location.href = "home.html";
 } else {
   await sendLoginLog({ userId: "", username: id, result: "失敗" });
