@@ -45,7 +45,7 @@ const loginTime = new Date().getTime(); // 現在のタイムスタンプ（ミ�
 localStorage.setItem("loggedIn", "true");
 localStorage.setItem("loginTime", loginTime.toString());
 
-  window.location.href = "home.html";
+  window.location.href = "home2.html";
 } else {
   await sendLoginLog({ userId: "", username: id, result: "失敗" });
   document.getElementById("error-msg").textContent = "IDまたはパスワードが間違っています。";
