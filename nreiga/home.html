@@ -24,13 +24,26 @@
       box-shadow: 0 10px 25px rgba(0,0,0,0.2);
       max-width: 400px;
     }
+    a {
+      color: #fff;
+      text-decoration: underline;
+      display: block;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
   <div class="message">
     <h1>ログイン成功！</h1>
     <p>ようこそ、レクリエーション支援サイトへ。</p>
+    <p>3秒後にレクリエーション選択画面に移動します...</p>
+    <a href="../shared-rec-materials/rec-select.html">自動で移動しない場合はこちら</a>
   </div>
   <script src="auth-check.js"></script>
+  <script>
+    setTimeout(() => {
+      window.location.href = "../shared-rec-materials/rec-select.html";
+    }, 3000);
+  </script>
 </body>
 </html>
