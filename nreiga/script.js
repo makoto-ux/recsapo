@@ -28,7 +28,7 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
     if (matched) {
       window.location.href = "home.html";
     } else {
-      document.getElementById("error-msg").textContent = "IDまたはパスワードが間違っています。";
+      document.getElementById("error-msg").textContent = "IDまたはパスワードが間違っています2。";
 
     }
   } catch (err) {
