@@ -49,13 +49,18 @@ function nextMode() {
       vy = 0;
       radius = 100;
       break;
-    case 4:
-      // 拡大
-      radius = 50;
+   case 4: // 拡大
+      radius += 1;
+      y = canvas.height / 2; // yを中央に固定
+      x += (canvas.width / 2 - x) * 0.05; // xを中央に徐々に寄せる
+      if (radius >= 300) nextMode();
       break;
-    case 5:
-      // 縮小
-      radius = 300;
+
+    case 5: // 縮小
+      radius -= 1;
+      y = canvas.height / 2; // yを中央に固定
+      x += (canvas.width / 2 - x) * 0.05; // xを中央に徐々に寄せる
+      if (radius <= 30) nextMode();
       break;
   }
 }
