@@ -1,46 +1,130 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8" />
-  <title>のぞき穴ゲーム</title>
-  <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      background: black;
-    }
-    #container {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-      background: black;
-    }
-    #bgImage {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      user-select: none;
-      -webkit-user-drag: none;
-    }
-    #maskCanvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 10;
-      width: 100vw;
-      height: 100vh;
-      pointer-events: none;
-    }
-  </style>
-</head>
-<body>
-  <div id="container">
-    <img id="bgImage" src="img/sewing_machine.png" alt="背景画像" />
-    <canvas id="maskCanvas"></canvas>
-  </div>
+const canvas = document.getElementById('maskCanvas');
+const ctx = canvas.getContext('2d');
 
-  <script src="choimie-script.js"></script>
-</body>
-</html>
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let x = 150;
+let y = 150;
+let vx = 2;
+let vy = 1.5;
+let radius = 100;
+let mode = 0;
+let bounceCount = 0;
+let alpha = 1;
+
+function nextMode() {
+  mode = Math.floor(Math.random() * 6); // 0～5の6モードをランダムに
+  bounceCount = 0;
+  alpha = 1;
+
+  switch (mode) {
+    case 0:
+      // ランダムふらふら
+      x = 150;
+      y = 150;
+      vx = 2;
+      vy = 1.5;
+      radius = 100;
+      break;
+    case 1:
+      // 横一直線
+      y = Math.random() * canvas.height;
+      x = 0;
+      vx = 3;
+      vy = 0;
+      radius = 100;
+      break;
+    case 2:
+      // 縦一直線
+      x = Math.random() * canvas.width;
+      y = 0;
+      vx = 0;
+      vy = 3;
+      radius = 100;
+      break;
+    case 3:
+      // フェードアウト
+      vx = 0;
+      vy = 0;
+      radius = 100;
+      break;
+    case 4:
+      // 拡大
+      radius = 50;
+      break;
+    case 5:
+      // 縮小
+      radius = 300;
+      break;
+  }
+}
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = 'black';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.globalCompositeOperation = 'destination-out';
+  ctx.beginPath();
+  ctx.arc(x, y, radius, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  switch (mode) {
+    case 0: // ランダム移動
+      vx += (Math.random() - 0.5) * 0.3;
+      vy += (Math.random() - 0.5) * 0.3;
+      x += vx;
+      y += vy;
+      if (x + radius > canvas.width || x - radius < 0) {
+        vx *= -1;
+        bounceCount++;
+      }
+      if (y + radius > canvas.height || y - radius < 0) {
+        vy *= -1;
+        bounceCount++;
+      }
+      if (bounceCount >= 6) nextMode();
+      break;
+
+    case 1: // 横移動
+      x += vx;
+      if (x - radius > canvas.width) nextMode();
+      break;
+
+    case 2: // 縦移動
+      y += vy;
+      if (y - radius > canvas.height) nextMode();
+      break;
+
+    case 3: // フェードアウト
+      alpha -= 0.01;
+      if (alpha <= 0) {
+        alpha = 0;
+        nextMode();
+      }
+      break;
+
+    case 4: // 拡大
+      radius += 1;
+      if (radius >= 300) nextMode();
+      break;
+
+    case 5: // 縮小
+      radius -= 1;
+      if (radius <= 30) nextMode();
+      break;
+  }
+
+  requestAnimationFrame(draw);
+}
+
+const bgImage = document.getElementById('bgImage');
+if (bgImage.complete) {
+  draw();
+} else {
+  bgImage.onload = () => draw();
+}
