@@ -19,48 +19,41 @@ function nextMode() {
   alpha = 1;
 
   switch (mode) {
-    case 0:
-      // ランダムふらふら
+    case 0: // ランダムふらふら
       x = 150;
       y = 150;
       vx = 2;
       vy = 1.5;
       radius = 100;
       break;
-    case 1:
-      // 横一直線
+    case 1: // 横一直線
       y = Math.random() * canvas.height;
       x = 0;
       vx = 3;
       vy = 0;
       radius = 100;
       break;
-    case 2:
-      // 縦一直線
+    case 2: // 縦一直線
       x = Math.random() * canvas.width;
       y = 0;
       vx = 0;
       vy = 3;
       radius = 100;
       break;
-    case 3:
-      // フェードアウト
+    case 3: // フェードアウト
       vx = 0;
       vy = 0;
       radius = 100;
       break;
-   case 4: // 拡大
-      radius += 1;
-      y = canvas.height / 2; // yを中央に固定
-      x += (canvas.width / 2 - x) * 0.05; // xを中央に徐々に寄せる
-      if (radius >= 300) nextMode();
+    case 4: // 拡大準備
+      radius = 50;
+      x = Math.random() * canvas.width;
+      y = canvas.height / 2;
       break;
-
-    case 5: // 縮小
-      radius -= 1;
-      y = canvas.height / 2; // yを中央に固定
-      x += (canvas.width / 2 - x) * 0.05; // xを中央に徐々に寄せる
-      if (radius <= 30) nextMode();
+    case 5: // 縮小準備
+      radius = 300;
+      x = Math.random() * canvas.width;
+      y = canvas.height / 2;
       break;
   }
 }
@@ -115,11 +108,15 @@ function draw() {
 
     case 4: // 拡大
       radius += 1;
+      y = canvas.height / 2;
+      x += (canvas.width / 2 - x) * 0.05;
       if (radius >= 300) nextMode();
       break;
 
     case 5: // 縮小
       radius -= 1;
+      y = canvas.height / 2;
+      x += (canvas.width / 2 - x) * 0.05;
       if (radius <= 30) nextMode();
       break;
   }
