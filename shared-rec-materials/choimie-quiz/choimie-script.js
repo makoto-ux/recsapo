@@ -9,7 +9,6 @@ let y = 150;
 let vx = 2;
 let vy = 1.5;
 let radius = 100;
-let targetRadius = 100;
 let mode = 0;
 let bounceCount = 0;
 let alpha = 1;
@@ -26,7 +25,6 @@ function nextMode() {
       vx = 2;
       vy = 1.5;
       radius = 100;
-      targetRadius = radius * (1.2 + Math.random() * 0.8); // 1.2〜2.0倍
       break;
     case 1: // 横一直線
       y = Math.random() * canvas.height;
@@ -34,7 +32,6 @@ function nextMode() {
       vx = 3;
       vy = 0;
       radius = 100;
-      targetRadius = radius * (1.2 + Math.random() * 0.8);
       break;
     case 2: // 縦一直線
       x = Math.random() * canvas.width;
@@ -42,23 +39,19 @@ function nextMode() {
       vx = 0;
       vy = 3;
       radius = 100;
-      targetRadius = radius * (1.2 + Math.random() * 0.8);
       break;
     case 3: // フェードアウト
       vx = 0;
       vy = 0;
       radius = 100;
-      targetRadius = radius * (1.2 + Math.random() * 0.8);
       break;
     case 4: // 拡大準備
       radius = 50;
-      targetRadius = 300;
       x = Math.random() * canvas.width;
       y = canvas.height / 2;
       break;
     case 5: // 縮小準備
       radius = 300;
-      targetRadius = 30;
       x = Math.random() * canvas.width;
       y = canvas.height / 2;
       break;
@@ -77,11 +70,6 @@ function draw() {
   ctx.arc(x, y, radius, 0, Math.PI * 2);
   ctx.fill();
   ctx.restore();
-
-  // 半径の拡大をすべてのモードで共通処理として実行
-  if (radius < targetRadius) {
-    radius += (targetRadius - radius) * 0.02;
-  }
 
   switch (mode) {
     case 0: // ランダム移動
@@ -119,15 +107,17 @@ function draw() {
       break;
 
     case 4: // 拡大
+      radius += 1;
       y = canvas.height / 2;
       x += (canvas.width / 2 - x) * 0.05;
-      if (radius >= targetRadius) nextMode();
+      if (radius >= 300) nextMode();
       break;
 
     case 5: // 縮小
+      radius -= 1;
       y = canvas.height / 2;
       x += (canvas.width / 2 - x) * 0.05;
-      if (radius <= targetRadius) nextMode();
+      if (radius <= 30) nextMode();
       break;
   }
 
