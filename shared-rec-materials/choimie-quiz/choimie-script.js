@@ -12,13 +12,18 @@ let radius = 100;
 let mode = 0;
 let bounceCount = 0;
 let alpha = 1;
+let modeQueue = [];
 
 function nextMode() {
-  mode = Math.floor(Math.random() * 6); // 0～5の6モードをランダムに
+  if (modeQueue.length === 0) {
+    modeQueue = [0, 1, 2, 3, 4, 5].sort(() => Math.random() - 0.5);
+  }
+
+  mode = modeQueue.pop(); // または shift()
   bounceCount = 0;
   alpha = 1;
 
-  console.log("選ばれたモード:", mode); // ← 追加！
+  console.log("選ばれたモード:", mode);
   
   switch (mode) {
     case 0: // ランダムふらふら
