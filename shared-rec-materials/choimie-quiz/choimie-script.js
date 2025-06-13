@@ -8,7 +8,7 @@ let x = 150;
 let y = 150;
 let vx = 2;
 let vy = 1.5;
-let radius = 200;
+let radius = 100;
 let mode = 0;
 let bounceCount = 0;
 let alpha = 1;
@@ -18,6 +18,8 @@ function nextMode() {
   bounceCount = 0;
   alpha = 1;
 
+  console.log("選ばれたモード:", mode); // ← 追加！
+  
   switch (mode) {
     case 0: // ランダムふらふら
       x = 150;
