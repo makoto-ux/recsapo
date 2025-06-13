@@ -24,26 +24,26 @@ function nextMode() {
       y = 150;
       vx = 2;
       vy = 1.5;
-      radius = 100;
+      radius = 200;
       break;
     case 1: // 横一直線
       y = Math.random() * canvas.height;
       x = 0;
       vx = 3;
       vy = 0;
-      radius = 100;
+      radius = 200;
       break;
     case 2: // 縦一直線
       x = Math.random() * canvas.width;
       y = 0;
       vx = 0;
       vy = 3;
-      radius = 100;
+      radius = 200;
       break;
     case 3: // フェードアウト
       vx = 0;
       vy = 0;
-      radius = 100;
+      radius = 200;
       break;
     case 4: // 拡大準備
       radius = 50;
