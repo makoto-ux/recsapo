@@ -14,15 +14,12 @@ let bounceCount = 0;
 let alpha = 1;
 let modeQueue = [];
 let isPaused = false;
-let animationId = null; // ← アニメーションIDを記録
 
 canvas.addEventListener('click', () => {
   isPaused = !isPaused;
   console.log(isPaused ? '⏸ 停止中' : '▶️ 再開');
   if (!isPaused) {
-    draw(); // 再開時に再度開始
-  } else {
-    cancelAnimationFrame(animationId); // 停止時にフレームをキャンセル
+    draw(); // 再開時のみ再実行
   }
 });
 
@@ -78,6 +75,8 @@ function nextMode() {
 }
 
 function draw() {
+  if (isPaused) return; // ← ここで完全停止させる
+
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = 'black';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -117,7 +116,7 @@ function draw() {
         vy *= -1;
         bounceCount++;
       }
-      console.log('bounce__Count:', bounceCount);
+      console.log('bounceCount:', bounceCount);
       if (bounceCount >= 6) nextMode();
       break;
 
@@ -154,8 +153,7 @@ function draw() {
       break;
   }
 
-  // 次のフレームを予約（animationIdに記録）
-  animationId = requestAnimationFrame(draw);
+  requestAnimationFrame(draw);
 }
 
 const bgImage = document.getElementById('bgImage');
