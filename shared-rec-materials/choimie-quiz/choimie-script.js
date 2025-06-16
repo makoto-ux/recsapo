@@ -13,7 +13,7 @@ let mode = 0;
 let bounceCount = 0;
 let alpha = 1;
 let modeQueue = [];
-let isPaused = false; // 一時停止フラグを追加
+let isPaused = false; // 一時停止フラグ
 
 function nextMode() {
   if (modeQueue.length === 0) {
@@ -27,38 +27,38 @@ function nextMode() {
   console.log("選ばれたモード:", mode);
   
   switch (mode) {
-    case 0:
+    case 0: // ランダム移動
       x = 150;
       y = 150;
       vx = 2;
       vy = 1.5;
       radius = 200;
       break;
-    case 1:
+    case 1: // 横移動
       y = Math.random() * canvas.height;
       x = 0;
       vx = 3;
       vy = 0;
       radius = 200;
       break;
-    case 2:
+    case 2: // 縦移動
       x = Math.random() * canvas.width;
       y = 0;
       vx = 0;
       vy = 3;
       radius = 200;
       break;
-    case 3:
+    case 3: // フェードアウト
       vx = 0;
       vy = 0;
       radius = 200;
       break;
-    case 4:
+    case 4: // 拡大
       radius = 50;
       x = Math.random() * canvas.width;
       y = canvas.height / 2;
       break;
-    case 5:
+    case 5: // 縮小
       radius = 300;
       x = Math.random() * canvas.width;
       y = canvas.height / 2;
@@ -67,11 +67,23 @@ function nextMode() {
 }
 
 function draw() {
-  if (isPaused) return; // 一時停止中は処理を止める
-
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = 'black';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  if (isPaused) {
+    // 停止中の文字表示
+    ctx.save();
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+    ctx.font = 'bold 64px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('一時停止中', canvas.width / 2, canvas.height / 2);
+    ctx.restore();
+
+    requestAnimationFrame(draw);
+    return;
+  }
 
   ctx.save();
   ctx.globalAlpha = alpha;
@@ -129,14 +141,18 @@ function draw() {
   requestAnimationFrame(draw);
 }
 
-// クリックで一時停止／再開の切り替え
+// クリックで一時停止／再開
 canvas.addEventListener('click', () => {
   isPaused = !isPaused;
-  if (!isPaused) {
-    draw(); // 再開時にアニメーションループを再開
-  }
 });
 
+// ダブルクリックでCanvas非表示に（オプション）
+canvas.addEventListener('dblclick', () => {
+  isPaused = true;
+  canvas.style.display = 'none'; // 背景だけ見せる
+});
+
+// 初回描画開始（背景画像の読み込み完了後）
 const bgImage = document.getElementById('bgImage');
 if (bgImage.complete) {
   draw();
