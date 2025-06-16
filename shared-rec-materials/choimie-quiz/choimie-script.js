@@ -27,6 +27,7 @@ canvas.addEventListener('click', () => {
 // ダブルクリックでフルオープン（正解表示）
 canvas.addEventListener('dblclick', () => {
   isRevealed = true;
+  isPaused = false; // ←ここを追加
   console.log('✅ 正解！（ダブルクリック）背景をフル表示');
 });
 
