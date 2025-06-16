@@ -14,9 +14,9 @@ let bounceCount = 0;
 let alpha = 1;
 let modeQueue = [];
 let isPaused = false;
-let isRevealed = false; // ← 正解表示状態（マスク解除）フラグ
+let isRevealed = false; // 正解表示状態（マスク解除）フラグ
 
-// 左クリックで一時停止／再開
+// 左クリックで一時停止／再開（正解表示中は無効）
 canvas.addEventListener('click', () => {
   if (!isRevealed) {
     isPaused = !isPaused;
@@ -51,7 +51,7 @@ document.addEventListener('keydown', (e) => {
 function nextMode() {
   bounceCount = 0;
   alpha = 1;
-  isRevealed = false; // ← 新モードに移行時、マスク再適用
+  isRevealed = false; // 新モードに移行時、マスク再適用
 
   if (modeQueue.length === 0) {
     modeQueue = [0, 1, 2, 3, 4, 5].sort(() => Math.random() - 0.5);
@@ -102,10 +102,15 @@ function nextMode() {
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // 背景画像をキャンバス全体に描画
+  ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
+
+  // 黒いフィルターを描画
   ctx.fillStyle = 'black';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // フルオープン（マスク非表示）中はのぞき窓描画をスキップ
+  // フルオープン（マスク非表示）でなければ、のぞき窓の透明部分を描く
   if (!isRevealed) {
     ctx.save();
     ctx.globalAlpha = alpha;
@@ -116,6 +121,7 @@ function draw() {
     ctx.restore();
   }
 
+  // 一時停止時はメッセージを表示し、描画ループを止める
   if (isPaused) {
     ctx.save();
     ctx.font = 'bold 160px sans-serif';
@@ -130,9 +136,10 @@ function draw() {
     ctx.strokeText(text, cx, cy);
     ctx.fillText(text, cx, cy);
     ctx.restore();
-    return;
+    return; // ここで描画停止
   }
 
+  // 各モードごとの動作
   switch (mode) {
     case 0:
       vx += (Math.random() - 0.5) * 0.3;
