@@ -21,7 +21,6 @@ canvas.addEventListener('click', () => {
   if (!isRevealed) {
     isPaused = !isPaused;
     console.log(isPaused ? '⏸ 停止中 (Click)' : '▶️ 再開 (Click)');
-    if (!isPaused) draw();
   }
 });
 
@@ -29,7 +28,6 @@ canvas.addEventListener('click', () => {
 canvas.addEventListener('dblclick', () => {
   isRevealed = true;
   console.log('✅ 正解！（ダブルクリック）背景をフル表示');
-  draw();
 });
 
 // リモコン Enter／ArrowUpキー対応
@@ -38,13 +36,11 @@ document.addEventListener('keydown', (e) => {
     if (!isRevealed) {
       isPaused = !isPaused;
       console.log(isPaused ? '⏸ 停止中 (Enter)' : '▶️ 再開 (Enter)');
-      if (!isPaused) draw();
     }
   }
   if (e.key === 'ArrowUp') {
     isRevealed = true;
     console.log('✅ 正解！（ArrowUpキー）背景をフル表示');
-    draw();
   }
 });
 
@@ -110,8 +106,8 @@ function draw() {
   ctx.fillStyle = 'black';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // フルオープン（マスク非表示）でなければ、のぞき窓の透明部分を描く
   if (!isRevealed) {
+    // 透明なのぞき穴部分を描く
     ctx.save();
     ctx.globalAlpha = alpha;
     ctx.globalCompositeOperation = 'destination-out';
@@ -121,7 +117,7 @@ function draw() {
     ctx.restore();
   }
 
-  // 一時停止時はメッセージを表示し、描画ループを止める
+  // 一時停止時メッセージ表示（正解表示時も表示）
   if (isPaused) {
     ctx.save();
     ctx.font = 'bold 160px sans-serif';
@@ -136,71 +132,72 @@ function draw() {
     ctx.strokeText(text, cx, cy);
     ctx.fillText(text, cx, cy);
     ctx.restore();
-    return; // ここで描画停止
   }
 
-  // 各モードごとの動作
-  switch (mode) {
-    case 0:
-      vx += (Math.random() - 0.5) * 0.3;
-      vy += (Math.random() - 0.5) * 0.3;
-      x += vx;
-      y += vy;
+  // アニメーションは一時停止か正解表示なら止める
+  if (!isPaused && !isRevealed) {
+    switch (mode) {
+      case 0:
+        vx += (Math.random() - 0.5) * 0.3;
+        vy += (Math.random() - 0.5) * 0.3;
+        x += vx;
+        y += vy;
 
-      if (x + radius > canvas.width) {
-        x = canvas.width - radius;
-        vx *= -1;
-        bounceCount++;
-      }
-      if (x - radius < 0) {
-        x = radius;
-        vx *= -1;
-        bounceCount++;
-      }
-      if (y + radius > canvas.height) {
-        y = canvas.height - radius;
-        vy *= -1;
-        bounceCount++;
-      }
-      if (y - radius < 0) {
-        y = radius;
-        vy *= -1;
-        bounceCount++;
-      }
-      if (bounceCount >= 6) nextMode();
-      break;
+        if (x + radius > canvas.width) {
+          x = canvas.width - radius;
+          vx *= -1;
+          bounceCount++;
+        }
+        if (x - radius < 0) {
+          x = radius;
+          vx *= -1;
+          bounceCount++;
+        }
+        if (y + radius > canvas.height) {
+          y = canvas.height - radius;
+          vy *= -1;
+          bounceCount++;
+        }
+        if (y - radius < 0) {
+          y = radius;
+          vy *= -1;
+          bounceCount++;
+        }
+        if (bounceCount >= 6) nextMode();
+        break;
 
-    case 1:
-      x += vx;
-      if (x - radius > canvas.width) nextMode();
-      break;
+      case 1:
+        x += vx;
+        if (x - radius > canvas.width) nextMode();
+        break;
 
-    case 2:
-      y += vy;
-      if (y - radius > canvas.height) nextMode();
-      break;
+      case 2:
+        y += vy;
+        if (y - radius > canvas.height) nextMode();
+        break;
 
-    case 3:
-      alpha -= 0.01;
-      if (alpha <= 0) {
-        alpha = 0;
-        nextMode();
-      }
-      break;
+      case 3:
+        alpha -= 0.01;
+        if (alpha <= 0) {
+          alpha = 0;
+          nextMode();
+        }
+        break;
 
-    case 4:
-      radius += 1;
-      y = canvas.height / 2;
-      x += (canvas.width / 2 - x) * 0.05;
-      if (radius >= 300) nextMode();
-      break;
+      case 4:
+        radius += 1;
+        y = canvas.height / 2;
+        x += (canvas.width / 2 - x) * 0.05;
+        if (radius >= 300) nextMode();
+        break;
 
-    case 5:
-      radius -= 1;
-      y = canvas.height / 2;
-      x += (canvas.width / 2 - x) * 0.05;
-      if (radius <= 30) nextMode();
-      break;
+      case 5:
+        radius -= 1;
+        y = canvas.height / 2;
+        x += (canvas.width / 2 - x) * 0.05;
+        if (radius <= 30) nextMode();
+        break;
+    }
   }
 
   requestAnimationFrame(draw);
