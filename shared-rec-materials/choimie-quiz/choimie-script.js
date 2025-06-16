@@ -117,7 +117,7 @@ function draw() {
         vy *= -1;
         bounceCount++;
       }
-      console.log('bounceCount:', bounceCount);
+      console.log('bounce__Count:', bounceCount);
       if (bounceCount >= 6) nextMode();
       break;
 
