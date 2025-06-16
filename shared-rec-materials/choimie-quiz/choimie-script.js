@@ -13,6 +13,13 @@ let mode = 0;
 let bounceCount = 0;
 let alpha = 1;
 let modeQueue = [];
+let isPaused = false; // ← 停止フラグ
+
+canvas.addEventListener('click', () => {
+  isPaused = !isPaused;
+  console.log(isPaused ? '⏸ 停止中' : '▶️ 再開');
+  if (!isPaused) draw(); // 再開する場合のみ再描画
+});
 
 function nextMode() {
   bounceCount = 0; // 確実にリセット
@@ -66,6 +73,8 @@ function nextMode() {
 }
 
 function draw() {
+  if (isPaused) return; // ← 停止中なら何もしない
+
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = 'black';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -86,12 +95,12 @@ function draw() {
       y += vy;
 
       if (x + radius > canvas.width) {
-        x = canvas.width - radius;  // はみ出し補正
+        x = canvas.width - radius;
         vx *= -1;
         bounceCount++;
       }
       if (x - radius < 0) {
-        x = radius; // はみ出し補正
+        x = radius;
         vx *= -1;
         bounceCount++;
       }
