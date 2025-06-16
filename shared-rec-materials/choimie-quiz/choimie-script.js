@@ -19,7 +19,7 @@ canvas.addEventListener('click', () => {
   isPaused = !isPaused;
   console.log(isPaused ? '⏸ 停止中' : '▶️ 再開');
   if (!isPaused) {
-    draw(); // 再開時のみ draw を再開
+    draw(); // 再開時のみ再実行
   }
 });
 
@@ -79,7 +79,6 @@ function draw() {
   ctx.fillStyle = 'black';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // のぞき窓を描画
   ctx.save();
   ctx.globalAlpha = alpha;
   ctx.globalCompositeOperation = 'destination-out';
@@ -88,17 +87,24 @@ function draw() {
   ctx.fill();
   ctx.restore();
 
-  // 一時停止中に「一時停止中」テキスト表示
   if (isPaused) {
-    ctx.fillStyle = 'white';
-    ctx.font = 'bold 80px sans-serif';
+    // 停止中表示（黒縁付き白文字）
+    ctx.save();
+    ctx.font = 'bold 160px sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText('一時停止中', canvas.width / 2, canvas.height / 2);
-    return; // 動きの更新は行わない
+    ctx.lineWidth = 8;
+    ctx.strokeStyle = 'black';
+    ctx.fillStyle = 'white';
+    const text = '一時停止中';
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+    ctx.strokeText(text, cx, cy);
+    ctx.fillText(text, cx, cy);
+    ctx.restore();
+    return; // ここでアニメーション停止
   }
 
-  // 通常モード：動きを更新
   switch (mode) {
     case 0:
       vx += (Math.random() - 0.5) * 0.3;
