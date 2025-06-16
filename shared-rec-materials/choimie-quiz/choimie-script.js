@@ -15,16 +15,16 @@ let alpha = 1;
 let modeQueue = [];
 
 function nextMode() {
+  bounceCount = 0; // 確実にリセット
+  alpha = 1;
+
   if (modeQueue.length === 0) {
     modeQueue = [0, 1, 2, 3, 4, 5].sort(() => Math.random() - 0.5);
   }
 
-  mode = modeQueue.pop(); // または shift()
-  bounceCount = 0;
-  alpha = 1;
+  mode = modeQueue.pop();
+  console.log('mode:', mode, 'bounceCount:', bounceCount);
 
-  console.log("選ばれたモード:", mode);
-  
   switch (mode) {
     case 0: // ランダムふらふら
       x = 150;
@@ -84,11 +84,24 @@ function draw() {
       vy += (Math.random() - 0.5) * 0.3;
       x += vx;
       y += vy;
-      if (x + radius > canvas.width || x - radius < 0) {
+
+      if (x + radius > canvas.width) {
+        x = canvas.width - radius;  // はみ出し補正
         vx *= -1;
         bounceCount++;
       }
-      if (y + radius > canvas.height || y - radius < 0) {
+      if (x - radius < 0) {
+        x = radius; // はみ出し補正
+        vx *= -1;
+        bounceCount++;
+      }
+      if (y + radius > canvas.height) {
+        y = canvas.height - radius;
+        vy *= -1;
+        bounceCount++;
+      }
+      if (y - radius < 0) {
+        y = radius;
         vy *= -1;
         bounceCount++;
       }
