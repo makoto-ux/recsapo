@@ -19,7 +19,7 @@ canvas.addEventListener('click', () => {
   isPaused = !isPaused;
   console.log(isPaused ? '⏸ 停止中' : '▶️ 再開');
   if (!isPaused) {
-    draw(); // 再開時のみ再実行
+    draw(); // 再開時のみ draw を再開
   }
 });
 
@@ -75,24 +75,11 @@ function nextMode() {
 }
 
 function draw() {
-  if (isPaused) {
-    // 一時停止中の表示
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = 'black';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.fillStyle = 'white';
-    ctx.font = 'bold 80px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('一時停止中', canvas.width / 2, canvas.height / 2);
-    return;
-  }
-
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = 'black';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+  // のぞき窓を描画
   ctx.save();
   ctx.globalAlpha = alpha;
   ctx.globalCompositeOperation = 'destination-out';
@@ -101,6 +88,17 @@ function draw() {
   ctx.fill();
   ctx.restore();
 
+  // 一時停止中に「一時停止中」テキスト表示
+  if (isPaused) {
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 80px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('一時停止中', canvas.width / 2, canvas.height / 2);
+    return; // 動きの更新は行わない
+  }
+
+  // 通常モード：動きを更新
   switch (mode) {
     case 0:
       vx += (Math.random() - 0.5) * 0.3;
@@ -128,7 +126,6 @@ function draw() {
         vy *= -1;
         bounceCount++;
       }
-      console.log('BounceCount:', bounceCount);
       if (bounceCount >= 6) nextMode();
       break;
 
