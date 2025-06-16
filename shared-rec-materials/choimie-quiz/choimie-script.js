@@ -15,13 +15,26 @@ let alpha = 1;
 let modeQueue = [];
 let isPaused = false;
 
+// 左クリックでも一時停止
 canvas.addEventListener('click', () => {
   isPaused = !isPaused;
-  console.log(isPaused ? '⏸ 停止中' : '▶️ 再開');
+  console.log(isPaused ? '⏸ 停止中 (Click)' : '▶️ 再開 (Click)');
   if (!isPaused) {
-    draw(); // 再開時のみ再実行
+    draw();
   }
 });
+
+// リモコン用 Enter キー対応
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    isPaused = !isPaused;
+    console.log(isPaused ? '⏸ 停止中 (Enter)' : '▶️ 再開 (Enter)');
+    if (!isPaused) {
+      draw();
+    }
+  }
+});
+
 
 function nextMode() {
   bounceCount = 0;
