@@ -75,7 +75,19 @@ function nextMode() {
 }
 
 function draw() {
-  if (isPaused) return; // ← ここで完全停止させる
+  if (isPaused) {
+    // 一時停止中の表示
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 80px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('一時停止中', canvas.width / 2, canvas.height / 2);
+    return;
+  }
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = 'black';
