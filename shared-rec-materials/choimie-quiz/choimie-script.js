@@ -13,35 +13,34 @@ let mode = 0;
 let bounceCount = 0;
 let alpha = 1;
 let modeQueue = [];
-let isPaused = false; // 一時停止フラグ
 
 function nextMode() {
   if (modeQueue.length === 0) {
     modeQueue = [0, 1, 2, 3, 4, 5].sort(() => Math.random() - 0.5);
   }
 
-  mode = modeQueue.pop();
+  mode = modeQueue.pop(); // または shift()
   bounceCount = 0;
   alpha = 1;
 
   console.log("選ばれたモード:", mode);
   
   switch (mode) {
-    case 0: // ランダム移動
+    case 0: // ランダムふらふら
       x = 150;
       y = 150;
       vx = 2;
       vy = 1.5;
       radius = 200;
       break;
-    case 1: // 横移動
+    case 1: // 横一直線
       y = Math.random() * canvas.height;
       x = 0;
       vx = 3;
       vy = 0;
       radius = 200;
       break;
-    case 2: // 縦移動
+    case 2: // 縦一直線
       x = Math.random() * canvas.width;
       y = 0;
       vx = 0;
@@ -53,12 +52,12 @@ function nextMode() {
       vy = 0;
       radius = 200;
       break;
-    case 4: // 拡大
+    case 4: // 拡大準備
       radius = 50;
       x = Math.random() * canvas.width;
       y = canvas.height / 2;
       break;
-    case 5: // 縮小
+    case 5: // 縮小準備
       radius = 300;
       x = Math.random() * canvas.width;
       y = canvas.height / 2;
@@ -71,20 +70,6 @@ function draw() {
   ctx.fillStyle = 'black';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  if (isPaused) {
-    // 停止中の文字表示
-    ctx.save();
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
-    ctx.font = 'bold 64px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('一時停止中', canvas.width / 2, canvas.height / 2);
-    ctx.restore();
-
-    requestAnimationFrame(draw);
-    return;
-  }
-
   ctx.save();
   ctx.globalAlpha = alpha;
   ctx.globalCompositeOperation = 'destination-out';
@@ -94,7 +79,7 @@ function draw() {
   ctx.restore();
 
   switch (mode) {
-    case 0:
+    case 0: // ランダム移動
       vx += (Math.random() - 0.5) * 0.3;
       vy += (Math.random() - 0.5) * 0.3;
       x += vx;
@@ -109,28 +94,33 @@ function draw() {
       }
       if (bounceCount >= 6) nextMode();
       break;
-    case 1:
+
+    case 1: // 横移動
       x += vx;
       if (x - radius > canvas.width) nextMode();
       break;
-    case 2:
+
+    case 2: // 縦移動
       y += vy;
       if (y - radius > canvas.height) nextMode();
       break;
-    case 3:
+
+    case 3: // フェードアウト
       alpha -= 0.01;
       if (alpha <= 0) {
         alpha = 0;
         nextMode();
       }
       break;
-    case 4:
+
+    case 4: // 拡大
       radius += 1;
       y = canvas.height / 2;
       x += (canvas.width / 2 - x) * 0.05;
       if (radius >= 300) nextMode();
       break;
-    case 5:
+
+    case 5: // 縮小
       radius -= 1;
       y = canvas.height / 2;
       x += (canvas.width / 2 - x) * 0.05;
@@ -141,18 +131,6 @@ function draw() {
   requestAnimationFrame(draw);
 }
 
-// クリックで一時停止／再開
-canvas.addEventListener('click', () => {
-  isPaused = !isPaused;
-});
-
-// ダブルクリックでCanvas非表示に（オプション）
-canvas.addEventListener('dblclick', () => {
-  isPaused = true;
-  canvas.style.display = 'none'; // 背景だけ見せる
-});
-
-// 初回描画開始（背景画像の読み込み完了後）
 const bgImage = document.getElementById('bgImage');
 if (bgImage.complete) {
   draw();
