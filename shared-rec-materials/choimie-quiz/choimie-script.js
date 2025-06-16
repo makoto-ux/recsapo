@@ -14,9 +14,8 @@ let bounceCount = 0;
 let alpha = 1;
 let modeQueue = [];
 let isPaused = false;
-let isRevealed = false; // 正解表示状態（マスク解除）フラグ
+let isRevealed = false;
 
-// 左クリックで一時停止／再開（正解表示中は無効）
 canvas.addEventListener('click', () => {
   if (!isRevealed) {
     isPaused = !isPaused;
@@ -24,14 +23,12 @@ canvas.addEventListener('click', () => {
   }
 });
 
-// ダブルクリックでフルオープン（正解表示）
 canvas.addEventListener('dblclick', () => {
   isRevealed = true;
-  isPaused = false; // ←ここを追加
+  isPaused = false;
   console.log('✅ 正解！（ダブルクリック）背景をフル表示');
 });
 
-// リモコン Enter／ArrowUpキー対応
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') {
     if (!isRevealed) {
@@ -41,6 +38,7 @@ document.addEventListener('keydown', (e) => {
   }
   if (e.key === 'ArrowUp') {
     isRevealed = true;
+    isPaused = false;
     console.log('✅ 正解！（ArrowUpキー）背景をフル表示');
   }
 });
@@ -48,7 +46,7 @@ document.addEventListener('keydown', (e) => {
 function nextMode() {
   bounceCount = 0;
   alpha = 1;
-  isRevealed = false; // 新モードに移行時、マスク再適用
+  isRevealed = false;
 
   if (modeQueue.length === 0) {
     modeQueue = [0, 1, 2, 3, 4, 5].sort(() => Math.random() - 0.5);
@@ -100,15 +98,14 @@ function nextMode() {
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  // 背景画像をキャンバス全体に描画
+  // 背景画像の描画
   ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
 
-  // 黒いフィルターを描画
-  ctx.fillStyle = 'black';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
+  // マスク描画（正解表示ではスキップ）
   if (!isRevealed) {
-    // 透明なのぞき穴部分を描く
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
     ctx.save();
     ctx.globalAlpha = alpha;
     ctx.globalCompositeOperation = 'destination-out';
@@ -118,7 +115,7 @@ function draw() {
     ctx.restore();
   }
 
-  // 一時停止時メッセージ表示（正解表示時も表示）
+  // 停止中表示
   if (isPaused) {
     ctx.save();
     ctx.font = 'bold 160px sans-serif';
@@ -135,7 +132,6 @@ function draw() {
     ctx.restore();
   }
 
-  // アニメーションは一時停止か正解表示なら止める
   if (!isPaused && !isRevealed) {
     switch (mode) {
       case 0:
@@ -164,7 +160,6 @@ function draw() {
           vy *= -1;
           bounceCount++;
         }
-        console.log('BounceCount:', bounceCount);
         if (bounceCount >= 6) nextMode();
         break;
 
