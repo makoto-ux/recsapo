@@ -14,31 +14,44 @@ let bounceCount = 0;
 let alpha = 1;
 let modeQueue = [];
 let isPaused = false;
+let isRevealed = false; // ← 正解表示状態（マスク解除）フラグ
 
-// 左クリックでも一時停止
+// 左クリックで一時停止／再開
 canvas.addEventListener('click', () => {
-  isPaused = !isPaused;
-  console.log(isPaused ? '⏸ 停止中 (Click)' : '▶️ 再開 (Click)');
-  if (!isPaused) {
+  if (!isRevealed) {
+    isPaused = !isPaused;
+    console.log(isPaused ? '⏸ 停止中 (Click)' : '▶️ 再開 (Click)');
+    if (!isPaused) draw();
+  }
+});
+
+// ダブルクリックでフルオープン（正解表示）
+canvas.addEventListener('dblclick', () => {
+  isRevealed = true;
+  console.log('✅ 正解！（ダブルクリック）背景をフル表示');
+  draw();
+});
+
+// リモコン Enter／ArrowUpキー対応
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    if (!isRevealed) {
+      isPaused = !isPaused;
+      console.log(isPaused ? '⏸ 停止中 (Enter)' : '▶️ 再開 (Enter)');
+      if (!isPaused) draw();
+    }
+  }
+  if (e.key === 'ArrowUp') {
+    isRevealed = true;
+    console.log('✅ 正解！（ArrowUpキー）背景をフル表示');
     draw();
   }
 });
 
-// リモコン用 Enter キー対応
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') {
-    isPaused = !isPaused;
-    console.log(isPaused ? '⏸ 停止中 (Enter)' : '▶️ 再開 (Enter)');
-    if (!isPaused) {
-      draw();
-    }
-  }
-});
-
-
 function nextMode() {
   bounceCount = 0;
   alpha = 1;
+  isRevealed = false; // ← 新モードに移行時、マスク再適用
 
   if (modeQueue.length === 0) {
     modeQueue = [0, 1, 2, 3, 4, 5].sort(() => Math.random() - 0.5);
@@ -92,16 +105,18 @@ function draw() {
   ctx.fillStyle = 'black';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  ctx.save();
-  ctx.globalAlpha = alpha;
-  ctx.globalCompositeOperation = 'destination-out';
-  ctx.beginPath();
-  ctx.arc(x, y, radius, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
+  // フルオープン（マスク非表示）中はのぞき窓描画をスキップ
+  if (!isRevealed) {
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
 
   if (isPaused) {
-    // 停止中表示（黒縁付き白文字）
     ctx.save();
     ctx.font = 'bold 160px sans-serif';
     ctx.textAlign = 'center';
@@ -115,7 +130,7 @@ function draw() {
     ctx.strokeText(text, cx, cy);
     ctx.fillText(text, cx, cy);
     ctx.restore();
-    return; // ここでアニメーション停止
+    return;
   }
 
   switch (mode) {
