@@ -102,27 +102,31 @@
   </div>
 
   <script>
-    let readyToStart = false;
+  let readyToStart = false;
 
-    function showFirstQuestion() {
-      document.getElementById("questionOverlay").style.display = "flex";
+  function showFirstQuestion() {
+    document.getElementById("questionOverlay").style.display = "flex";
+    // 一定時間待ってからスタートできるようにする
+    setTimeout(() => {
       readyToStart = true;
-    }
+    }, 1000); // 1秒待機（必要なら2000に変更可）
+  }
 
-    function goToGame() {
-      if (readyToStart) {
-        window.location.href = "game.html";
-      }
+  function goToGame() {
+    if (readyToStart) {
+      window.location.href = "game.html";
     }
+  }
 
-    // マウスクリック・決定ボタンで game.html へ
-    document.addEventListener("click", goToGame);
-    document.addEventListener("keydown", (e) => {
-      if (readyToStart && (e.key === "Enter" || e.key === " ")) {
-        goToGame();
-      }
-    });
-  </script>
+  // クリックまたはEnterキーで遷移（ただし readyToStart が true のとき）
+  document.addEventListener("click", goToGame);
+  document.addEventListener("keydown", (e) => {
+    if (readyToStart && (e.key === "Enter" || e.key === " ")) {
+      goToGame();
+    }
+  });
+</script>
+
 
 </body>
 </html>
