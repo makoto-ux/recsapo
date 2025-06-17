@@ -124,7 +124,7 @@ function draw() {
     ctx.lineWidth = 8;
     ctx.strokeStyle = 'black';
     ctx.fillStyle = 'white';
-    const text = '一時停止中';
+    const text = '答えをどうぞ！！';
     const cx = canvas.width / 2;
     const cy = canvas.height / 2;
     ctx.strokeText(text, cx, cy);
