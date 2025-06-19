@@ -14,7 +14,7 @@ function preloadImages(callback) {
 
   function tryLoadNext() {
     const img = new Image();
-    const path = img/img${index}.png;
+    const path = `img/img${index}.png`;
     img.src = path;
     img.onload = () => {
       imagePaths.push(path);
@@ -22,7 +22,7 @@ function preloadImages(callback) {
       tryLoadNext();
     };
     img.onerror = () => {
-      console.log(📦 全${imagePaths.length}問の画像を検出しました);
+      console.log(`📦 全${imagePaths.length}問の画像を検出しました`);
       availableImages = [...imagePaths];
       shuffleArray(availableImages);
       callback();
