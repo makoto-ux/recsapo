@@ -8,14 +8,13 @@ const imagePaths = [];
 let availableImages = [];
 let usedImages = [];
 let currentImageIndex = 0;
-let showIntro = true; // ✅ 導入画面表示フラグ
 
 function preloadImages(callback) {
   let index = 0;
 
   function tryLoadNext() {
     const img = new Image();
-    const path = `img/img${index}.png`;
+    const path = img/img${index}.png;
     img.src = path;
     img.onload = () => {
       imagePaths.push(path);
@@ -23,10 +22,9 @@ function preloadImages(callback) {
       tryLoadNext();
     };
     img.onerror = () => {
-      console.log(`📦 全${imagePaths.length}問の画像を検出しました`);
+      console.log(📦 全${imagePaths.length}問の画像を検出しました);
       availableImages = [...imagePaths];
       shuffleArray(availableImages);
-      showIntro = true; // 初回導入表示
       callback();
     };
   }
@@ -56,15 +54,9 @@ let mode = 0, bounceCount = 0, alpha = 1;
 let modeQueue = [];
 let isPaused = false;
 let isRevealed = false;
-let nextImageReady = false;
+let nextImageReady = false; // ✅ 正解後の次進行フラグ
 
 canvas.addEventListener('click', () => {
-  if (showIntro) {
-    isPaused = false;
-    showIntro = false;
-    draw();
-    return;
-  }
   if (!isRevealed) {
     isPaused = !isPaused;
     console.log(isPaused ? '⏸ 停止中 (Click)' : '▶️ 再開 (Click)');
@@ -73,7 +65,6 @@ canvas.addEventListener('click', () => {
     isRevealed = false;
     loadNextImage();
     nextMode();
-    showIntro = true;
   }
 });
 
@@ -87,12 +78,6 @@ canvas.addEventListener('dblclick', () => {
 });
 
 document.addEventListener('keydown', (e) => {
-  if (showIntro && (e.key === 'Enter' || e.key === 'ArrowUp')) {
-    isPaused = false;
-    showIntro = false;
-    draw();
-    return;
-  }
   if (!isRevealed) {
     if (e.key === 'Enter') {
       isPaused = !isPaused;
@@ -110,7 +95,6 @@ document.addEventListener('keydown', (e) => {
       isRevealed = false;
       loadNextImage();
       nextMode();
-      showIntro = true;
     }
   }
 });
@@ -144,33 +128,6 @@ function nextMode() {
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
-
-  if (showIntro) {
-    ctx.save();
-    ctx.font = 'bold 160px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.lineWidth = 8;
-    ctx.strokeStyle = 'black';
-    ctx.fillStyle = 'white';
-
-    const cx = canvas.width / 2;
-    const cy = canvas.height / 2 - 100;
-    const questionNum = usedImages.length + 1;
-    const line1 = `第${questionNum}問目！`;
-    const line2 = `クリック または 決定ボタンでスタート`;
-
-    ctx.strokeText(line1, cx, cy);
-    ctx.fillText(line1, cx, cy);
-
-    ctx.font = 'bold 80px sans-serif';
-    ctx.strokeText(line2, cx, cy + 150);
-    ctx.fillText(line2, cx, cy + 150);
-    ctx.restore();
-
-    requestAnimationFrame(draw);
-    return;
-  }
 
   if (!isRevealed) {
     ctx.fillStyle = 'black';
@@ -230,6 +187,7 @@ function draw() {
   requestAnimationFrame(draw);
 }
 
+// 初期処理
 preloadImages(() => {
   loadNextImage();
   draw();
