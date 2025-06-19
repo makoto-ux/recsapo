@@ -54,39 +54,48 @@ let mode = 0, bounceCount = 0, alpha = 1;
 let modeQueue = [];
 let isPaused = false;
 let isRevealed = false;
+let nextImageReady = false; // ✅ 正解後の次進行フラグ
 
 canvas.addEventListener('click', () => {
   if (!isRevealed) {
     isPaused = !isPaused;
     console.log(isPaused ? '⏸ 停止中 (Click)' : '▶️ 再開 (Click)');
+  } else if (nextImageReady) {
+    nextImageReady = false;
+    isRevealed = false;
+    loadNextImage();
+    nextMode();
   }
 });
 
 canvas.addEventListener('dblclick', () => {
-  isRevealed = true;
-  isPaused = false;
-  console.log('✅ 正解！（ダブルクリック）背景をフル表示');
-  setTimeout(() => {
-    loadNextImage();
-    nextMode();
-  }, 1000);
+  if (!isRevealed) {
+    isRevealed = true;
+    isPaused = false;
+    console.log('✅ 正解！（ダブルクリック）背景をフル表示');
+    nextImageReady = true;
+  }
 });
 
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') {
-    if (!isRevealed) {
+  if (!isRevealed) {
+    if (e.key === 'Enter') {
       isPaused = !isPaused;
       console.log(isPaused ? '⏸ 停止中 (Enter)' : '▶️ 再開 (Enter)');
     }
-  }
-  if (e.key === 'ArrowUp') {
-    isRevealed = true;
-    isPaused = false;
-    console.log('✅ 正解！（ArrowUpキー）背景をフル表示');
-    setTimeout(() => {
+    if (e.key === 'ArrowUp') {
+      isRevealed = true;
+      isPaused = false;
+      console.log('✅ 正解！（ArrowUpキー）背景をフル表示');
+      nextImageReady = true;
+    }
+  } else {
+    if ((e.key === 'Enter' || e.key === 'ArrowUp') && nextImageReady) {
+      nextImageReady = false;
+      isRevealed = false;
       loadNextImage();
       nextMode();
-    }, 1000);
+    }
   }
 });
 
@@ -158,11 +167,20 @@ function draw() {
         if (y + radius > canvas.height || y - radius < 0) { vy *= -1; bounceCount++; }
         if (bounceCount >= 6) nextMode();
         break;
-      case 1: x += vx; if (x - radius > canvas.width) nextMode(); break;
-      case 2: y += vy; if (y - radius > canvas.height) nextMode(); break;
-      case 3: alpha -= 0.01; if (alpha <= 0) { alpha = 0; nextMode(); } break;
-      case 4: radius += 1; y = canvas.height / 2; x += (canvas.width / 2 - x) * 0.05; if (radius >= 300) nextMode(); break;
-      case 5: radius -= 1; y = canvas.height / 2; x += (canvas.width / 2 - x) * 0.05; if (radius <= 30) nextMode(); break;
+      case 1:
+        x += vx; if (x - radius > canvas.width) nextMode(); break;
+      case 2:
+        y += vy; if (y - radius > canvas.height) nextMode(); break;
+      case 3:
+        alpha -= 0.01; if (alpha <= 0) { alpha = 0; nextMode(); } break;
+      case 4:
+        radius += 1; y = canvas.height / 2;
+        x += (canvas.width / 2 - x) * 0.05;
+        if (radius >= 300) nextMode(); break;
+      case 5:
+        radius -= 1; y = canvas.height / 2;
+        x += (canvas.width / 2 - x) * 0.05;
+        if (radius <= 30) nextMode(); break;
     }
   }
 
