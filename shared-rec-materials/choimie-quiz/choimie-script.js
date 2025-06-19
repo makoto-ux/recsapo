@@ -7,13 +7,7 @@ const bgImage = document.getElementById('bgImage');
 const imagePaths = [];
 let availableImages = [];
 let usedImages = [];
-
-let currentQuestion = 0;
-let showQuestionText = false;
-let isPaused = false;
-let isRevealed = false;
-let waitingToShowQuestion = false;
-let nextImageReady = false;
+let currentImageIndex = 0;
 
 function preloadImages(callback) {
   let index = 0;
@@ -55,41 +49,22 @@ function loadNextImage() {
   bgImage.src = nextImg;
 }
 
-function showQuestionNumber() {
-  currentQuestion++;
-  showQuestionText = true;
-  isPaused = true;
-  nextImageReady = true;
-}
+let x = 150, y = 150, vx = 2, vy = 1.5, radius = 100;
+let mode = 0, bounceCount = 0, alpha = 1;
+let modeQueue = [];
+let isPaused = false;
+let isRevealed = false;
+let nextImageReady = false; // ✅ 正解後の次進行フラグ
 
-function startNextImage() {
-  showQuestionText = false;
-  isPaused = false;
-  isRevealed = false;
-  waitingToShowQuestion = false;
-  nextImageReady = false;
-  loadNextImage();
-  nextMode();
-}
-
-function handleUserTrigger() {
-  if (waitingToShowQuestion) {
-    // 背景フル表示中 → 第〇問目表示へ
-    waitingToShowQuestion = false;
-    showQuestionNumber();
-  } else if (showQuestionText && nextImageReady) {
-    // 第〇問目表示中 → 次の問題へ
-    startNextImage();
-  } else if (!isRevealed) {
+canvas.addEventListener('click', () => {
+  if (!isRevealed) {
     isPaused = !isPaused;
-    console.log(isPaused ? '⏸ 停止中' : '▶️ 再開');
-  }
-}
-
-canvas.addEventListener('click', handleUserTrigger);
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter' || e.key === 'ArrowUp') {
-    handleUserTrigger();
+    console.log(isPaused ? '⏸ 停止中 (Click)' : '▶️ 再開 (Click)');
+  } else if (nextImageReady) {
+    nextImageReady = false;
+    isRevealed = false;
+    loadNextImage();
+    nextMode();
   }
 });
 
@@ -97,30 +72,42 @@ canvas.addEventListener('dblclick', () => {
   if (!isRevealed) {
     isRevealed = true;
     isPaused = false;
-    waitingToShowQuestion = true;
     console.log('✅ 正解！（ダブルクリック）背景をフル表示');
+    nextImageReady = true;
   }
 });
 
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'ArrowUp' && !isRevealed) {
-    isRevealed = true;
-    isPaused = false;
-    waitingToShowQuestion = true;
-    console.log('✅ 正解！（ArrowUpキー）背景をフル表示');
+  if (!isRevealed) {
+    if (e.key === 'Enter') {
+      isPaused = !isPaused;
+      console.log(isPaused ? '⏸ 停止中 (Enter)' : '▶️ 再開 (Enter)');
+    }
+    if (e.key === 'ArrowUp') {
+      isRevealed = true;
+      isPaused = false;
+      console.log('✅ 正解！（ArrowUpキー）背景をフル表示');
+      nextImageReady = true;
+    }
+  } else {
+    if ((e.key === 'Enter' || e.key === 'ArrowUp') && nextImageReady) {
+      nextImageReady = false;
+      isRevealed = false;
+      loadNextImage();
+      nextMode();
+    }
   }
 });
-
-let x = 150, y = 150, vx = 2, vy = 1.5, radius = 100;
-let mode = 0, bounceCount = 0, alpha = 1;
-let modeQueue = [];
 
 function nextMode() {
   bounceCount = 0;
   alpha = 1;
+  isRevealed = false;
+
   if (modeQueue.length === 0) {
     modeQueue = [0, 1, 2, 3, 4, 5].sort(() => Math.random() - 0.5);
   }
+
   mode = modeQueue.pop();
   switch (mode) {
     case 0:
@@ -154,31 +141,19 @@ function draw() {
     ctx.restore();
   }
 
-  if (waitingToShowQuestion) {
-    ctx.save();
-    ctx.font = 'bold 120px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillStyle = 'white';
-    ctx.strokeStyle = 'black';
-    ctx.lineWidth = 8;
-    const text = '答えをどうぞ！！';
-    ctx.strokeText(text, canvas.width / 2, canvas.height / 2);
-    ctx.fillText(text, canvas.width / 2, canvas.height / 2);
-    ctx.restore();
-  }
-
-  if (showQuestionText && nextImageReady) {
+  if (isPaused) {
     ctx.save();
     ctx.font = 'bold 160px sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.strokeStyle = 'black';
-    ctx.fillStyle = 'yellow';
     ctx.lineWidth = 8;
-    const text = `第${currentQuestion}問`;
-    ctx.strokeText(text, canvas.width / 2, canvas.height / 2);
-    ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+    ctx.strokeStyle = 'black';
+    ctx.fillStyle = 'white';
+    const text = '答えをどうぞ！！';
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+    ctx.strokeText(text, cx, cy);
+    ctx.fillText(text, cx, cy);
     ctx.restore();
   }
 
@@ -192,9 +167,12 @@ function draw() {
         if (y + radius > canvas.height || y - radius < 0) { vy *= -1; bounceCount++; }
         if (bounceCount >= 6) nextMode();
         break;
-      case 1: x += vx; if (x - radius > canvas.width) nextMode(); break;
-      case 2: y += vy; if (y - radius > canvas.height) nextMode(); break;
-      case 3: alpha -= 0.01; if (alpha <= 0) { alpha = 0; nextMode(); } break;
+      case 1:
+        x += vx; if (x - radius > canvas.width) nextMode(); break;
+      case 2:
+        y += vy; if (y - radius > canvas.height) nextMode(); break;
+      case 3:
+        alpha -= 0.01; if (alpha <= 0) { alpha = 0; nextMode(); } break;
       case 4:
         radius += 1; y = canvas.height / 2;
         x += (canvas.width / 2 - x) * 0.05;
@@ -211,7 +189,6 @@ function draw() {
 
 // 初期処理
 preloadImages(() => {
-  currentQuestion = 0;
   loadNextImage();
   draw();
 });
