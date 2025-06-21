@@ -10,23 +10,50 @@
       overflow: hidden;
       background: black;
     }
+
     #container {
       position: relative;
       width: 100vw;
       height: 100vh;
     }
+
     #bgImage {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
     }
+
     #maskCanvas {
       position: absolute;
       top: 0;
       left: 0;
       z-index: 10;
       pointer-events: auto;
+    }
+
+    /* ▼ 第〇問目オーバーレイ用スタイル追加 */
+    #questionOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #fffef7;
+      color: #2c3e50;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      font-size: 64px;
+      font-weight: bold;
+      z-index: 1000;
+      flex-direction: column;
+    }
+
+    #questionOverlay small {
+      font-size: 24px;
+      margin-top: 20px;
+      color: #888;
     }
   </style>
 </head>
@@ -36,6 +63,33 @@
     <canvas id="maskCanvas"></canvas>
   </div>
 
+  <!-- ▼ 第〇問目オーバーレイのHTML要素 -->
+  <div id="questionOverlay">
+    <span id="questionText"></span>
+    <small>クリック または 決定ボタンでスタート</small>
+  </div>
+
+  <!-- ▼ スクリプト本体 -->
   <script src="choimie-script.js"></script>
+
+  <!-- ▼ 問題番号表示用スクリプト追加 -->
+  <script>
+    let currentQuestionNumber = 2; // 第2問目から（第1問目はintroで表示済み想定）
+
+    function showQuestionOverlay() {
+      const overlay = document.getElementById("questionOverlay");
+      const questionText = document.getElementById("questionText");
+      questionText.textContent = `第${currentQuestionNumber}問目！`;
+      overlay.style.display = "flex";
+
+      setTimeout(() => {
+        overlay.style.display = "none";
+        currentQuestionNumber++;
+      }, 2000); // 表示時間：2秒
+    }
+
+    // グローバルに使えるように window に公開
+    window.showQuestionOverlay = showQuestionOverlay;
+  </script>
 </body>
 </html>
