@@ -41,13 +41,21 @@ function shuffleArray(array) {
 
 function loadNextImage() {
   if (availableImages.length === 0) {
-    alert("すべての画像を出題し終えました！");
+    console.log("✅ すべての画像を出題し終えました！");
+    const endOverlay = document.getElementById('endOverlay');
+    if (endOverlay) {
+      endOverlay.style.display = 'flex';
+    } else {
+      alert("すべての画像を出題し終えました！（endOverlayが見つかりません）");
+    }
     return;
   }
+
   const nextImg = availableImages.pop();
   usedImages.push(nextImg);
   bgImage.src = nextImg;
 }
+
 
 let x = 150, y = 150, vx = 2, vy = 1.5, radius = 100;
 let mode = 0, bounceCount = 0, alpha = 1;
