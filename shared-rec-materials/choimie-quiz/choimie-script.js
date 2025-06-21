@@ -44,8 +44,9 @@ function loadNextImage() {
     console.log("✅ すべての画像を出題し終えました！");
     const endOverlay = document.getElementById('endOverlay');
     if (endOverlay) {
-      endOverlay.style.display = 'flex';
       console.log("✅ テスト");
+      endOverlay.style.display = 'flex';
+      
     } else {
       alert("すべての画像を出題し終えました！（endOverlayが見つかりません）");
     }
