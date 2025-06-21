@@ -63,6 +63,7 @@ canvas.addEventListener('click', () => {
   } else if (nextImageReady) {
     nextImageReady = false;
     isRevealed = false;
+    if (typeof showQuestionOverlay === 'function') showQuestionOverlay(); // ✅ 第〇問目の表示
     loadNextImage();
     nextMode();
   }
@@ -93,6 +94,7 @@ document.addEventListener('keydown', (e) => {
     if ((e.key === 'Enter' || e.key === 'ArrowUp') && nextImageReady) {
       nextImageReady = false;
       isRevealed = false;
+      if (typeof showQuestionOverlay === 'function') showQuestionOverlay(); // ✅ 第〇問目の表示
       loadNextImage();
       nextMode();
     }
