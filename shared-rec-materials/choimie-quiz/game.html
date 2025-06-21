@@ -64,7 +64,7 @@
   </div>
 
   <!-- ▼ 第〇問目オーバーレイのHTML要素 -->
-  <div id="questionOverlay">
+  <div id="questionOverlay" tabindex="0" aria-modal="true" role="dialog" aria-label="問題表示">
     <span id="questionText"></span>
     <small>クリック または 決定ボタンでスタート</small>
   </div>
@@ -75,20 +75,36 @@
   <!-- ▼ 問題番号表示用スクリプト追加 -->
   <script>
     let currentQuestionNumber = 2; // 第2問目から（第1問目はintroで表示済み想定）
+    const overlay = document.getElementById("questionOverlay");
+    const questionText = document.getElementById("questionText");
 
+    // この関数を呼ぶと第〇問目オーバーレイ表示し、ユーザー操作待ちになる
     function showQuestionOverlay() {
-      const overlay = document.getElementById("questionOverlay");
-      const questionText = document.getElementById("questionText");
       questionText.textContent = `第${currentQuestionNumber}問目！`;
       overlay.style.display = "flex";
+      overlay.focus();
 
-      setTimeout(() => {
+      // ユーザー操作待ち用イベントハンドラ
+      function proceed() {
         overlay.style.display = "none";
         currentQuestionNumber++;
-      }, 2000); // 表示時間：2秒
+        // イベント解除してから次へ
+        overlay.removeEventListener("click", proceed);
+        overlay.removeEventListener("keydown", keydownHandler);
+      }
+
+      function keydownHandler(e) {
+        // 決定キー（Enter, Space, 上矢印）やクリックで進行
+        if (e.key === "Enter" || e.key === " " || e.key === "ArrowUp") {
+          proceed();
+        }
+      }
+
+      overlay.addEventListener("click", proceed);
+      overlay.addEventListener("keydown", keydownHandler);
     }
 
-    // グローバルに使えるように window に公開
+    // グローバルに公開して外部jsから呼べるようにする
     window.showQuestionOverlay = showQuestionOverlay;
   </script>
 </body>
