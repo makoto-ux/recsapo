@@ -57,6 +57,7 @@ function loadNextImage() {
   const nextImg = availableImages.pop();
   usedImages.push(nextImg);
   bgImage.src = nextImg;
+  console.log("✅ テスト3");
 }
 
 
