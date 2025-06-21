@@ -40,6 +40,7 @@ function shuffleArray(array) {
 }
 
 function loadNextImage() {
+  console.log(`loadNextImage called - availableImages.length=${availableImages.length}`);
   if (availableImages.length === 0) {
     console.log("✅ すべての画像を出題し終えました！");
     const endOverlay = document.getElementById('endOverlay');
