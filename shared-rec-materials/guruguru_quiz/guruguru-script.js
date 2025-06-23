@@ -143,11 +143,15 @@ function nextMode() {
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
- 
+
+  if (!bgImage.complete || bgImage.naturalWidth === 0) {
+    // 画像が読み込まれていない場合はスキップ
+    requestAnimationFrame(draw);
+    return;
+  }
 
   if (isPaused) {
-    // 背景画像を静止状態で描画（画面中央にジャスト）
-  ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
     ctx.save();
     ctx.font = 'bold 160px sans-serif';
     ctx.textAlign = 'center';
@@ -162,20 +166,23 @@ function draw() {
     ctx.fillText(text, cx, cy);
     ctx.restore();
   }
+
   effectProgress += 0.01;
   if (effectProgress > 1) effectProgress = 1;
 
   if (!isPaused && !isRevealed) {
-  switch (currentEffect) {
-    case 'sliceRotate':  drawSliceRotate(); break;
-    case 'sliceShift':   drawSliceShift(); break;
-    case 'scaleCenter':  drawScaleDistort(); break;
-    case 'swirl':        drawSwirlEffect(); break;
-    case 'wave':         drawWaveEffect(); break;
+    switch (currentEffect) {
+      case 'sliceRotate':  drawSliceRotate(); break;
+      case 'sliceShift':   drawSliceShift(); break;
+      case 'scaleCenter':  drawScaleDistort(); break;
+      case 'swirl':        drawSwirlEffect(); break;
+      case 'wave':         drawWaveEffect(); break;
+    }
   }
-}
+
   requestAnimationFrame(draw);
 }
+
 
 function drawSliceRotate() {
   const sliceCount = 20;
