@@ -121,25 +121,7 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-function nextMode() {
-  bounceCount = 0;
-  alpha = 1;
-  isRevealed = false;
 
-  if (modeQueue.length === 0) {
-    modeQueue = [0, 1, 2, 3, 4, 5].sort(() => Math.random() - 0.5);
-  }
-
-  mode = modeQueue.pop();
-  switch (mode) {
-    case 0: x = 150; y = 150; vx = 2; vy = 1.5; radius = 200; break;
-    case 1: y = Math.random() * canvas.height; x = 0; vx = 3; vy = 0; radius = 200; break;
-    case 2: x = Math.random() * canvas.width; y = 0; vx = 0; vy = 3; radius = 200; break;
-    case 3: vx = 0; vy = 0; radius = 200; break;
-    case 4: radius = 50; x = Math.random() * canvas.width; y = canvas.height / 2; break;
-    case 5: radius = 300; x = Math.random() * canvas.width; y = canvas.height / 2; break;
-  }
-}
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
