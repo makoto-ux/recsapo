@@ -59,6 +59,10 @@ function loadNextImage() {
   usedImages.push(nextImg);
   bgImage.src = nextImg;
   console.log("✅ テスト3");
+  // 🎨 エフェクト切替
+  const effectList = ['sliceRotate', 'sliceShift', 'scaleCenter', 'swirl', 'wave'];
+  currentEffect = effectList[Math.floor(Math.random() * effectList.length)];
+  effectProgress = 0;
 }
 
 let isPaused = false;
