@@ -141,64 +141,74 @@ function nextMode() {
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
 
-  if (!isRevealed) {
-    ctx.fillStyle = 'black';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.save();
-    ctx.globalAlpha = alpha;
-    ctx.globalCompositeOperation = 'destination-out';
-    ctx.beginPath();
-    ctx.arc(x, y, radius, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-  }
-
-  if (isPaused) {
-    ctx.save();
-    ctx.font = 'bold 160px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.lineWidth = 8;
-    ctx.strokeStyle = 'black';
-    ctx.fillStyle = 'white';
-    const text = '答えをどうぞ！！';
-    const cx = canvas.width / 2;
-    const cy = canvas.height / 2;
-    ctx.strokeText(text, cx, cy);
-    ctx.fillText(text, cx, cy);
-    ctx.restore();
-  }
-
-  if (!isPaused && !isRevealed) {
-    switch (mode) {
-      case 0:
-        vx += (Math.random() - 0.5) * 0.3;
-        vy += (Math.random() - 0.5) * 0.3;
-        x += vx; y += vy;
-        if (x + radius > canvas.width || x - radius < 0) { vx *= -1; bounceCount++; }
-        if (y + radius > canvas.height || y - radius < 0) { vy *= -1; bounceCount++; }
-        if (bounceCount >= 6) nextMode();
-        break;
-      case 1:
-        x += vx; if (x - radius > canvas.width) nextMode(); break;
-      case 2:
-        y += vy; if (y - radius > canvas.height) nextMode(); break;
-      case 3:
-        alpha -= 0.01; if (alpha <= 0) { alpha = 0; nextMode(); } break;
-      case 4:
-        radius += 1; y = canvas.height / 2;
-        x += (canvas.width / 2 - x) * 0.05;
-        if (radius >= 300) nextMode(); break;
-      case 5:
-        radius -= 1; y = canvas.height / 2;
-        x += (canvas.width / 2 - x) * 0.05;
-        if (radius <= 30) nextMode(); break;
-    }
+  switch (currentEffect) {
+    case 'sliceRotate':  drawSliceRotate(); break;
+    case 'sliceShift':   drawSliceShift(); break;
+    case 'scaleCenter':  drawScaleDistort(); break;
+    case 'swirl':        drawSwirlEffect(); break;
+    case 'wave':         drawWaveEffect(); break;
   }
 
   requestAnimationFrame(draw);
+}
+
+function drawSliceRotate() {
+  const sliceCount = 20;
+  const sliceHeight = canvas.height / sliceCount;
+  for (let i = 0; i < sliceCount; i++) {
+    const dy = i * sliceHeight;
+    const angle = (1 - effectProgress) * Math.sin(i * 0.3) * 0.5;
+    ctx.save();
+    ctx.translate(canvas.width / 2, dy + sliceHeight / 2);
+    ctx.rotate(angle);
+    ctx.drawImage(bgImage, -canvas.width / 2, -sliceHeight / 2, canvas.width, sliceHeight,
+                 -canvas.width / 2, -sliceHeight / 2, canvas.width, sliceHeight);
+    ctx.restore();
+  }
+}
+
+function drawSliceShift() {
+  const sliceCount = 30;
+  const sliceHeight = canvas.height / sliceCount;
+  for (let i = 0; i < sliceCount; i++) {
+    const dx = (1 - effectProgress) * Math.sin(i * 0.4) * 100;
+    const dy = i * sliceHeight;
+    ctx.drawImage(bgImage, 0, dy, canvas.width, sliceHeight,
+                  dx, dy, canvas.width, sliceHeight);
+  }
+}
+
+function drawScaleDistort() {
+  const scale = 1 + (1 - effectProgress) * 1.5;
+  const w = canvas.width / scale;
+  const h = canvas.height / scale;
+  const x = (canvas.width - w) / 2;
+  const y = (canvas.height - h) / 2;
+  ctx.drawImage(bgImage, x, y, w, h);
+}
+
+function drawSwirlEffect() {
+  const step = 5;
+  for (let y = 0; y < canvas.height; y += step) {
+    const ratio = y / canvas.height;
+    const angle = (1 - effectProgress) * (0.5 - ratio) * Math.PI;
+    ctx.save();
+    ctx.translate(canvas.width / 2, y);
+    ctx.rotate(angle);
+    ctx.drawImage(bgImage, -canvas.width / 2, -step / 2, canvas.width, step,
+                 -canvas.width / 2, -step / 2, canvas.width, step);
+    ctx.restore();
+  }
+}
+
+function drawWaveEffect() {
+  const step = 4;
+  for (let y = 0; y < canvas.height; y += step) {
+    const dx = Math.sin(y * 0.05 + (1 - effectProgress) * 5) * 30 * (1 - effectProgress);
+    ctx.drawImage(bgImage, 0, y, canvas.width, step,
+                  dx, y, canvas.width, step);
+  }
 }
 
 // 初期処理
