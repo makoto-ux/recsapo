@@ -39,17 +39,25 @@
       gap: 30px;
     }
 
-    .recreation-button {
-      background-color: #2980b9;
-      color: white;
-      padding: 40px;
-      font-size: 24px;
-      border: none;
-      border-radius: 16px;
-      cursor: pointer;
-      transition: background-color 0.2s ease;
-      text-align: center;
-    }
+   .recreation-button {
+  background-color: #2980b9;
+  color: white;
+  width: 250px;               /* ← 幅を固定 */
+  height: 200px;              /* ← 高さも固定 */
+  padding: 20px;
+  font-size: 20px;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  text-align: center;
+  display: flex;              /* ← 中央寄せのため追加 */
+  flex-direction: column;     /* ← 縦並び */
+  align-items: center;        /* ← 横中央 */
+  justify-content: center;    /* ← 縦中央 */
+  box-sizing: border-box;     /* ← paddingも含める */
+  word-break: keep-all;       /* ← 改行制御 */
+}
 
     .recreation-button i {
       font-size: 40px;
