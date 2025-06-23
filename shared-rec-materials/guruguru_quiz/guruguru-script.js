@@ -60,8 +60,8 @@ function loadNextImage() {
     return;
   }
 
-  const effectList = ['sliceRotate', 'sliceShift', 'scaleCenter', 'swirl', 'wave'];
-  currentEffect = effectList[Math.floor(Math.random() * effectList.length)];
+ //  const effectList = ['sliceRotate', 'sliceShift', 'scaleCenter', 'swirl', 'wave'];
+  // currentEffect = effectList[Math.floor(Math.random() * effectList.length)];
   effectProgress = 0;
 
   const nextImg = availableImages.pop();
