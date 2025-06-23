@@ -143,17 +143,7 @@ function nextMode() {
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  if (!isRevealed) {
-    ctx.fillStyle = 'black';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.save();
-    ctx.globalAlpha = alpha;
-    ctx.globalCompositeOperation = 'destination-out';
-    ctx.beginPath();
-    ctx.arc(x, y, radius, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-  }
+ 
 
   if (isPaused) {
     ctx.save();
