@@ -8,6 +8,8 @@ const imagePaths = [];
 let availableImages = [];
 let usedImages = [];
 let currentImageIndex = 0;
+let effectProgress = 0;
+let currentEffect = 'sliceRotate'; // 初期値は任意のエフェクト名
 
 function preloadImages(callback) {
   let index = 0;
