@@ -143,9 +143,37 @@ function nextMode() {
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (!isRevealed) {
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  if (isPaused) {
+    ctx.save();
+    ctx.font = 'bold 160px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.lineWidth = 8;
+    ctx.strokeStyle = 'black';
+    ctx.fillStyle = 'white';
+    const text = '答えをどうぞ！！';
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+    ctx.strokeText(text, cx, cy);
+    ctx.fillText(text, cx, cy);
+    ctx.restore();
+  }
   effectProgress += 0.01;
   if (effectProgress > 1) effectProgress = 1;
 
+  if (!isPaused && !isRevealed) {
   switch (currentEffect) {
     case 'sliceRotate':  drawSliceRotate(); break;
     case 'sliceShift':   drawSliceShift(); break;
@@ -153,7 +181,7 @@ function draw() {
     case 'swirl':        drawSwirlEffect(); break;
     case 'wave':         drawWaveEffect(); break;
   }
-
+}
   requestAnimationFrame(draw);
 }
 
