@@ -133,7 +133,7 @@ function draw() {
   }
 
   if (isPaused) {
-    ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
+   // ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
     ctx.save();
     ctx.font = 'bold 160px sans-serif';
     ctx.textAlign = 'center';
