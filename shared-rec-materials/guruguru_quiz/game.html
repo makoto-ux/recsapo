@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>ちょい見えクイズ</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: black;
+    }
+
+    #container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    #bgImage {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    #maskCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 10;
+      pointer-events: auto;
+    }
+
+    /* ▼ 第〇問目オーバーレイ用スタイル */
+    #questionOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #fffef7;
+      color: #2c3e50;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      font-size: 64px;
+      font-weight: bold;
+      z-index: 1000;
+      flex-direction: column;
+    }
+
+    #questionOverlay small {
+      font-size: 24px;
+      margin-top: 20px;
+      color: #888;
+    }
+
+    /* ▼ 終了オーバーレイ */
+    #endOverlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: white;
+      color: #333;
+      z-index: 2000;
+     
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-size: 32px;
+      text-align: center;
+    }
+
+    #endOverlay button {
+      padding: 16px 32px;
+      font-size: 24px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <img id="bgImage" alt="背景画像" />
+    <canvas id="maskCanvas"></canvas>
+  </div>
+
+  <!-- ▼ 第〇問目オーバーレイ -->
+  <div id="questionOverlay" tabindex="0" aria-modal="true" role="dialog" aria-label="問題表示">
+    <span id="questionText"></span>
+    <small>クリック または 決定ボタンでスタート</small>
+  </div>
+
+  <!-- ▼ 終了オーバーレイ -->
+  <div id="endOverlay">
+    <div>
+      <p>全ての問題を出題し終えました！</p>
+      <p>次回もお楽しみに！</p>
+      <p>「レク選択画面」に戻ってください。</p>
+    </div>
+    <button onclick="location.href='../rec-select.html'">レク選択画面に戻る</button>
+  </div>
+
+  <!-- ▼ スクリプト本体 -->
+  <script src="guruguru-script.js"></script> 
+
+  <!-- ▼ 第〇問目 表示スクリプト -->
+  <script>
+    let currentQuestionNumber = 2; // 第2問目から（intro表示済み想定）
+    const overlay = document.getElementById("questionOverlay");
+    const questionText = document.getElementById("questionText");
+
+    function showQuestionOverlay() {
+      questionText.textContent = `第${currentQuestionNumber}問目！`;
+      overlay.style.display = "flex";
+      overlay.focus();
+
+      function proceed() {
+        overlay.style.display = "none";
+        currentQuestionNumber++;
+        overlay.removeEventListener("click", proceed);
+        overlay.removeEventListener("keydown", keydownHandler);
+      }
+
+      function keydownHandler(e) {
+        if (e.key === "Enter" || e.key === " " || e.key === "ArrowUp") {
+          proceed();
+        }
+      }
+
+      overlay.addEventListener("click", proceed);
+      overlay.addEventListener("keydown", keydownHandler);
+    }
+
+    // 他のJSから呼び出せるように
+    window.showQuestionOverlay = showQuestionOverlay;
+  </script>
+  
+</body>
+</html>
