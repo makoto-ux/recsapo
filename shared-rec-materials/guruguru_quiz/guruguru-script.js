@@ -146,6 +146,8 @@ function draw() {
  
 
   if (isPaused) {
+    // 背景画像を静止状態で描画（画面中央にジャスト）
+  ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
     ctx.save();
     ctx.font = 'bold 160px sans-serif';
     ctx.textAlign = 'center';
