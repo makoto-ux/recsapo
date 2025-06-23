@@ -8,8 +8,15 @@ const imagePaths = [];
 let availableImages = [];
 let usedImages = [];
 let currentImageIndex = 0;
+
 let effectProgress = 0;
-let currentEffect = 'sliceRotate'; // 初期値は任意のエフェクト名
+let currentEffect = 'sliceRotate'; // 初期値
+let x = 150, y = 150, vx = 2, vy = 1.5, radius = 100;
+let mode = 0, bounceCount = 0, alpha = 1;
+let modeQueue = [];
+let isPaused = false;
+let isRevealed = false;
+let nextImageReady = false;
 
 function preloadImages(callback) {
   let index = 0;
@@ -42,33 +49,32 @@ function shuffleArray(array) {
 }
 
 function loadNextImage() {
-  console.log(`loadNextImage called - availableImages.length=${availableImages.length}`);
   if (availableImages.length === 0) {
     console.log("✅ すべての画像を出題し終えました！");
     const endOverlay = document.getElementById('endOverlay');
     if (endOverlay) {
-      console.log("✅ テスト");
       endOverlay.style.display = 'flex';
-      
     } else {
       alert("すべての画像を出題し終えました！（endOverlayが見つかりません）");
     }
     return;
   }
 
+  const effectList = ['sliceRotate', 'sliceShift', 'scaleCenter', 'swirl', 'wave'];
+  currentEffect = effectList[Math.floor(Math.random() * effectList.length)];
+  effectProgress = 0;
+
   const nextImg = availableImages.pop();
   usedImages.push(nextImg);
+
+  bgImage.onload = () => {
+    effectProgress = 0;
+    draw();
+  };
   bgImage.src = nextImg;
-  console.log("✅ テスト3");
+
+  console.log("✅ 新しい画像とエフェクトを読み込みました");
 }
-
-
-let x = 150, y = 150, vx = 2, vy = 1.5, radius = 100;
-let mode = 0, bounceCount = 0, alpha = 1;
-let modeQueue = [];
-let isPaused = false;
-let isRevealed = false;
-let nextImageReady = false; // ✅ 正解後の次進行フラグ
 
 canvas.addEventListener('click', () => {
   if (!isRevealed) {
@@ -77,7 +83,7 @@ canvas.addEventListener('click', () => {
   } else if (nextImageReady) {
     nextImageReady = false;
     isRevealed = false;
-    if (typeof showQuestionOverlay === 'function') showQuestionOverlay(); // ✅ 第〇問目の表示
+    if (typeof showQuestionOverlay === 'function') showQuestionOverlay();
     loadNextImage();
     nextMode();
   }
@@ -108,7 +114,7 @@ document.addEventListener('keydown', (e) => {
     if ((e.key === 'Enter' || e.key === 'ArrowUp') && nextImageReady) {
       nextImageReady = false;
       isRevealed = false;
-      if (typeof showQuestionOverlay === 'function') showQuestionOverlay(); // ✅ 第〇問目の表示
+      if (typeof showQuestionOverlay === 'function') showQuestionOverlay();
       loadNextImage();
       nextMode();
     }
@@ -126,23 +132,19 @@ function nextMode() {
 
   mode = modeQueue.pop();
   switch (mode) {
-    case 0:
-      x = 150; y = 150; vx = 2; vy = 1.5; radius = 200; break;
-    case 1:
-      y = Math.random() * canvas.height; x = 0; vx = 3; vy = 0; radius = 200; break;
-    case 2:
-      x = Math.random() * canvas.width; y = 0; vx = 0; vy = 3; radius = 200; break;
-    case 3:
-      vx = 0; vy = 0; radius = 200; break;
-    case 4:
-      radius = 50; x = Math.random() * canvas.width; y = canvas.height / 2; break;
-    case 5:
-      radius = 300; x = Math.random() * canvas.width; y = canvas.height / 2; break;
+    case 0: x = 150; y = 150; vx = 2; vy = 1.5; radius = 200; break;
+    case 1: y = Math.random() * canvas.height; x = 0; vx = 3; vy = 0; radius = 200; break;
+    case 2: x = Math.random() * canvas.width; y = 0; vx = 0; vy = 3; radius = 200; break;
+    case 3: vx = 0; vy = 0; radius = 200; break;
+    case 4: radius = 50; x = Math.random() * canvas.width; y = canvas.height / 2; break;
+    case 5: radius = 300; x = Math.random() * canvas.width; y = canvas.height / 2; break;
   }
 }
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  effectProgress += 0.01;
+  if (effectProgress > 1) effectProgress = 1;
 
   switch (currentEffect) {
     case 'sliceRotate':  drawSliceRotate(); break;
@@ -215,6 +217,5 @@ function drawWaveEffect() {
 
 // 初期処理
 preloadImages(() => {
-  loadNextImage();
-  draw();
+  loadNextImage(); // 最初の画像を表示
 });
