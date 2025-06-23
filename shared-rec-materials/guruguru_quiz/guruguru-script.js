@@ -3,7 +3,7 @@ const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-const bgImage = document.getElementById('bgImage');
+const bgImage = new Image(); に変更（必要に応じて） // const bgImage = document.getElementById('bgImage');
 const imagePaths = [];
 let availableImages = [];
 let usedImages = [];
