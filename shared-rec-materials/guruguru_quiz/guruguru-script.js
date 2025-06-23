@@ -178,14 +178,24 @@ function draw() {
 function drawSliceRotate() {
   const sliceCount = 20;
   const sliceHeight = canvas.height / sliceCount;
+
   for (let i = 0; i < sliceCount; i++) {
     const dy = i * sliceHeight;
     const angle = (1 - effectProgress) * Math.sin(i * 0.3) * 0.5;
+
     ctx.save();
+
+    // 各スライスの中央を基準に回転させる
     ctx.translate(canvas.width / 2, dy + sliceHeight / 2);
     ctx.rotate(angle);
-    ctx.drawImage(bgImage, -canvas.width / 2, -sliceHeight / 2, canvas.width, sliceHeight,
-                 -canvas.width / 2, -sliceHeight / 2, canvas.width, sliceHeight);
+
+    // 画像のこのスライス部分を全体に対して回転表示
+    ctx.drawImage(
+      bgImage,
+      0, dy, canvas.width, sliceHeight, // ソース矩形
+      -canvas.width / 2, -sliceHeight / 2, canvas.width, sliceHeight // 描画矩形（中心回転に合わせてずらす）
+    );
+
     ctx.restore();
   }
 }
